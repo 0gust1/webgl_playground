@@ -1,6 +1,6 @@
   var settings = {};
   var camera, scene, renderer, controls;
-  var geometry, material, material2, mesh, circle, circleMesh, extrudeG, extrudeMesh, group;
+  var geometry, material, material2, mesh, circle, circleMesh, extrudeG, extrudeMesh, dummy;
 
    //main initialisations
   init();
@@ -13,9 +13,6 @@
       //*********
       camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
       camera.position.z = 1000;
-      camera.position.y = -1000;
-      camera.position.x = -100;
-
 
       scene = new THREE.Scene();
 
@@ -29,19 +26,17 @@
           wireframe: false
       });
 
-      circle = new THREE.CircleGeometry(100);
-      circleMesh = new THREE.Mesh(circle, material);
+      dummy = new THREE.Object3D();
 
-      var dummy = new THREE.Object3D();
+      //group = new THREE.Object3D();
 
-      group = new THREE.Object3D();
-
-      generateBranch(75, dummy);
+      //generateBranch(75, dummy);
+      generateBranch2(75, dummy);
       dummy.rotateZ(1.5);
-      group.add(dummy);
-      group.add(new THREE.AxisHelper(50));
+      //group.add(dummy);
+      //group.add(new THREE.AxisHelper(50));
 
-      scene.add(group);
+      scene.add(dummy);
 
       var axisHelper = new THREE.AxisHelper(500);
       scene.add(axisHelper);
@@ -176,15 +171,60 @@
           }
 
       }
-  }
+
+
+      function generateBranch2(segLength, container) {
+          var geometry, mesh;
+          var branchCount = 3;
+
+          var extrudeSettings = {
+              steps: 5,
+              extrudePath: randomSpline(segLength, 5)
+          };
+
+          if (segLength > 10) {
+
+              for (var j = 0; j < branchCount; j++) {
+                  geometry = new THREE.ExtrudeGeometry(getShapes(1, 3, 1), extrudeSettings);
+                  //geometry.applyMatrix(new THREE.Matrix4().makeTranslation(segLength, 0, 0));
+                  mesh = new THREE.Mesh(geometry, material2);
+                  //put a positionned container at the end of the geom, for the next branch
+                  /*dummy = new THREE.Object3D();
+                  dummy.add(new THREE.AxisHelper(segLength / 4));
+
+                  dummy.position.setX(segLength);
+                  dummy.rotateY(THREE.Math.randFloat(-1, 1));
+                  dummy.rotateX(THREE.Math.randFloat(-1, 1));
+                  dummy.rotateZ(THREE.Math.randFloat(-1, 1));
+                  mesh.add(dummy);*/
+
+
+                  mesh.position.setX(segLength);
+                  mesh.rotateY(THREE.Math.randFloat(-1, 1));
+                  mesh.rotateX(THREE.Math.randFloat(-1, 1));
+                  mesh.rotateZ(THREE.Math.randFloat(-1, 1));
+                  mesh.add(new THREE.AxisHelper(segLength / 4))
+                  //THREE.GeometryUtils.merge(container, mesh);
+                  container.add(mesh);
+                  //container.merge(mesh);
+                  generateBranch2(segLength * 0.7, mesh);
+              }
+
+              //geometry2 = new THREE.ExtrudeGeometry(shapes.map(function(){return getShape(8,3)}),extrudeSettings);
+              //mesh2 = new THREE.Mesh(geometry, material2);
+          } else {
+              return;
+          }
+
+      }
+  } //end init function
 
   function animate() {
 
       // note: three.js includes requestAnimationFrame shim
       requestAnimationFrame(animate);
       if (settings.rotationAuto) {
-          group.rotation.y += 0.01;
-          group.rotation.z += 0.005;
+          dummy.rotation.y += 0.01;
       }
 
       controls.update();
