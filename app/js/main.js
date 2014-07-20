@@ -57,6 +57,8 @@ function initGui(settings) {
   settings.branchLength = 100;
   settings.branchCount = 2;
   settings.decayFactor = 0.7;
+  settings.radius = 4;
+  settings.sectionFaceCount = 5;
   settings.rotationAuto = false;
   settings.regenerate = reinit;
 
@@ -66,6 +68,8 @@ function initGui(settings) {
   gui.add(settings,'branchCount').max(5).step(1);
   gui.add(settings,'branchLength').step(1);
   gui.add(settings,'decayFactor').step(0.1);
+  gui.add(settings,'radius').step(0.1).min(1);
+  gui.add(settings,'sectionFaceCount').step(1).min(3);
   gui.add(settings, 'rotationAuto');
   gui.add(settings, 'regenerate');
 
@@ -167,7 +171,7 @@ function renderTree(){
     if (segLength > 20) {
 
       for (var j = 0; j < branchCount; j++) {
-        geometry = new THREE.ExtrudeGeometry(getShapes(1, 3, 4), extrudeSettings);
+        geometry = new THREE.ExtrudeGeometry(getShapes(1, settings.sectionFaceCount, settings.radius), extrudeSettings);
         mesh = new THREE.Mesh(geometry, material2);
 
         //put a positionned container at the end of the geom, for the next branch
@@ -211,7 +215,7 @@ function renderTree(){
     if (segLength > 10) {
 
       for (var j = 0; j < branchCount; j++) {
-        geometry = new THREE.ExtrudeGeometry(getShapes(1, 3, 1), extrudeSettings);
+        geometry = new THREE.ExtrudeGeometry(getShapes(1, settings.sectionFaceCount, settings.radius), extrudeSettings);
         //geometry.applyMatrix(new THREE.Matrix4().makeTranslation(segLength, 0, 0));
         mesh = new THREE.Mesh(geometry, material2);
         //put a positionned container at the end of the geom, for the next branch
