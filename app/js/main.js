@@ -59,6 +59,7 @@ function initGui(settings) {
   settings.decayFactor = 0.7;
   settings.radius = 4;
   settings.sectionFaceCount = 5;
+  settings.branchingAngleFactor = 1;
   settings.rotationAuto = false;
   settings.regenerate = reinit;
 
@@ -70,6 +71,7 @@ function initGui(settings) {
   gui.add(settings,'decayFactor').step(0.1);
   gui.add(settings,'radius').step(0.1).min(1);
   gui.add(settings,'sectionFaceCount').step(1).min(3);
+  gui.add(settings,'branchingAngleFactor').step(0.1).min(0.1);
   gui.add(settings, 'rotationAuto');
   gui.add(settings, 'regenerate');
 
@@ -179,9 +181,9 @@ function renderTree(){
         //dummy.add(new THREE.AxisHelper(segLength / 4));
 
         dummy.position.setX(segLength);
-        dummy.rotateY(THREE.Math.randFloat(-1, 1));
-        dummy.rotateX(THREE.Math.randFloat(-1, 1));
-        dummy.rotateZ(THREE.Math.randFloat(-1, 1));
+        dummy.rotateY(getRandomFloat());
+        dummy.rotateX(getRandomFloat());
+        dummy.rotateZ(getRandomFloat());
         mesh.add(dummy);
 
         container.add(mesh);
@@ -195,6 +197,10 @@ function renderTree(){
       return;
     }
 
+  }
+
+  function getRandomFloat(){
+    return THREE.Math.randFloat(-settings.branchingAngleFactor, settings.branchingAngleFactor);
   }
 
   /**
